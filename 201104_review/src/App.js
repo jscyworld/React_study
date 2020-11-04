@@ -9,19 +9,19 @@ const initialState = {
         {
             id: 1,
             name: "Sirius",
-            email: "jmoumnet@gmail.com",
+            email: "jmoumnet@myEmail.com",
             active: false,
         },
         {
             id: 2,
             name: "Leia",
-            email: "leia@gmail.com",
+            email: "leia@myEmail.com",
             active: false,
         },
         {
             id: 3,
             name: "Marie",
-            email: "marie@gmail.com",
+            email: "marie@myEmail.com",
             active: false,
         },
     ],
