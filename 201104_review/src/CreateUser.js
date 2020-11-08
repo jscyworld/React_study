@@ -1,6 +1,34 @@
-import React from "react";
+import React, { useCallback, useContext, useRef } from "react";
+import { UserDispatch } from "./App";
+import useInputs from "./useInputs";
 
-function CreateUser({ name, email, createUser, onTyping }) {
+function CreateUser({ initLength }) {
+    const [{ name, email }, onTyping, reset] = useInputs({
+        name: "",
+        email: "",
+    });
+    const dispatch = useContext(UserDispatch);
+    const nextId = useRef(initLength + 1);
+
+    const createUser = useCallback(() => {
+        dispatch({
+            type: "CREATE_USER",
+            user: {
+                id: nextId.current,
+                name,
+                email,
+            },
+        });
+        nextId.current += 1;
+        reset();
+    }, [name, email, reset, dispatch]);
+
+    const handelKeyPress = (e) => {
+        if (e.key === "Enter") {
+            createUser();
+        }
+    };
+
     return (
         <div>
             <input
@@ -13,6 +41,7 @@ function CreateUser({ name, email, createUser, onTyping }) {
                 name="email"
                 value={email}
                 onChange={onTyping}
+                onKeyPress={handelKeyPress}
                 placeholder="type email"
             ></input>
             <div>

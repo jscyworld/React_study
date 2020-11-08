@@ -1,7 +1,6 @@
-import { useCallback, useMemo, useReducer, useRef } from "react";
+import { createContext, useMemo, useReducer } from "react";
 import "./App.css";
 import CreateUser from "./CreateUser";
-import useInputs from "./useInputs";
 import UserList from "./UserList";
 
 const initialState = {
@@ -58,61 +57,20 @@ function countActivatedUser(userlist) {
     return userlist.filter((user) => user.active).length;
 }
 
+export const UserDispatch = createContext(null);
+
 function App() {
     const [state, dispatch] = useReducer(reducer, initialState);
     const { users } = state;
-    // const { name, email } = state.inputs;
-    const [{ name, email }, onTyping, reset] = useInputs({
-        name: "",
-        email: "",
-    });
-    const nextId = useRef(initialState.users.length + 1);
-
-    const createUser = useCallback(() => {
-        dispatch({
-            type: "CREATE_USER",
-            user: {
-                id: nextId.current,
-                name,
-                email,
-            },
-        });
-        nextId.current += 1;
-        reset();
-    }, [name, email, reset]);
-
-    const toggleUser = useCallback((id) => {
-        dispatch({
-            type: "TOGGLE_USER",
-            id,
-        });
-    }, []);
-
-    const deleteUser = useCallback((id) => {
-        dispatch({
-            type: "DELETE_USER",
-            id,
-        });
-    }, []);
-
     const count = useMemo(() => countActivatedUser(users), [users]);
 
     return (
-        <div>
-            <CreateUser
-                name={name}
-                email={email}
-                createUser={createUser}
-                onTyping={onTyping}
-            />
+        <UserDispatch.Provider value={dispatch}>
+            <CreateUser initLength={initialState.users.length} />
             <br />
-            <UserList
-                users={users}
-                toggleUser={toggleUser}
-                deleteUser={deleteUser}
-            />
+            <UserList users={users} />
             <p>Active user: {count}</p>
-        </div>
+        </UserDispatch.Provider>
     );
 }
 
